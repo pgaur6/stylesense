@@ -17,11 +17,15 @@ const app = express();
 
 // --- Middleware ---
 // Allow requests from the frontend
-// We'll add the Vercel URL here later once the frontend is deployed
+// Explicitly list every allowed origin — never use '*'
 app.use(cors({
   origin: [
-    'http://localhost:3000' // local frontend during development
-  ]
+    'http://localhost:3000',                  // local development
+    'https://stylesense-one.vercel.app'       // production frontend on Vercel
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
 }));
 
 // Parse incoming JSON request bodies
