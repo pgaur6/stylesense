@@ -1,101 +1,79 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+// app/page.jsx
+// Landing page — the first thing a new user sees.
+//
+// TWO STATES:
+//   1. Checking (instant): blank stone screen while localStorage is read.
+//      Prevents a flash of the landing page for users who've already onboarded.
+//   2. Landing: shown only to users who haven't completed onboarding.
+//      Typographic, no images, single CTA to /onboarding.
+//
+// router.replace (not router.push) is used for the redirect so the back
+// button on /wardrobe doesn't return to this landing page.
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { hasCompletedOnboarding } from '../utils/session';
+
+export default function HomePage() {
+  const router = useRouter();
+
+  // true during the instant localStorage check — shows a blank screen
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    if (hasCompletedOnboarding()) {
+      // Returning user — go straight to wardrobe
+      router.replace('/wardrobe');
+    } else {
+      // New user — show the landing page
+      setChecking(false);
+    }
+  }, []);
+
+  // ── Checking state — blank stone screen for a split second ───────────────
+  // This prevents the full landing page flashing before the redirect fires.
+  if (checking) {
+    return <div className="min-h-screen bg-background" />;
+  }
+
+  // ── Landing page ──────────────────────────────────────────────────────────
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-6 py-12">
+      <div className="max-w-sm w-full flex flex-col items-center text-center">
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        {/* Eyebrow label — Stylist Header pattern, no hr here */}
+        <p className="font-display text-[10px] font-semibold tracking-[0.14em] uppercase text-accent mb-8">
+          STYLESENSE
+        </p>
+
+        {/* Headline — bold, specific to the product's actual problem */}
+        {/* Syne display font, large weight — the typographic centrepiece */}
+        <h1 className="font-display text-4xl font-bold text-ink leading-tight mb-4">
+          Stop buying clothes you'll never wear.
+        </h1>
+
+        {/* Subtext — one line, muted, body font */}
+        <p className="font-body text-sm text-dust mb-10">
+          AI styling built around what's actually in your wardrobe.
+        </p>
+
+        {/* Primary CTA — exact design system button pattern */}
+        <button
+          type="button"
+          onClick={() => router.push('/onboarding')}
+          className="w-full bg-accent text-surface font-body font-medium text-sm px-5 py-3 rounded-lg hover:opacity-90 transition-opacity duration-150"
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          Get started
+        </button>
+
+        {/* Reassurance line below the button */}
+        <p className="font-body text-xs text-dust mt-4">
+          Takes about 2 minutes. No account needed.
+        </p>
+
+      </div>
     </div>
   );
 }

@@ -1,1 +1,18 @@
+# macOS
 .DS_Store
+
+# Environment variable files — NEVER commit these
+.env
+.env.local
+.env.development
+.env.production
+
+# Node modules — these are installed fresh on each deploy
+node_modules/
+
+# Next.js build output
+frontend/.next/
+frontend/out/
+
+# Vercel
+.vercel
